@@ -40,7 +40,7 @@ To evaluate on [Digits](https://arxiv.org/abs/1805.12018), run:
 
 ```
 mkdir ./data/svhn
-wget http://ufldl.stanford.edu/housenumbers/test_32x32.mat -O "./data/svhn/test_32x32.mat"  # download the test set of svhn
+wget http://ufldl.stanford.edu/housenumbers/test_32x32.mat -O "./data/svhn/test_32x32.mat"  # download the test set of SVHN
 python main_Digits.py --mode test --resume checkpoint/pretrained/ckpt_mnist.pth.tar
 ```
 
