@@ -216,7 +216,7 @@ def train(model, exp_name, kwargs):
 
         input, target = input.cuda(non_blocking=True).float(), target.cuda(non_blocking=True).long()
         params = list(model.parameters())
-        output = model.functional(params, True, input)  # training = True
+        output = model.functional(params, True, input) 
         loss = criterion(output, target)
 
         if counter_k == 0:
