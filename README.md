@@ -17,7 +17,7 @@ This package has the following requirements:
 * `MetaNN 0.1.5`
 * `Scipy 1.2.1`
 
-## Training 
+## Training from scratch
 
 Download and process [MNIST](http://yann.lecun.com/exdb/mnist/):
 
@@ -32,7 +32,7 @@ Run the following command:
 python main_Digits.py
 ```
 
-## Evaluation
+## Evaluating our pretrained models
 
 The pretrained models can be downloaded from [Google Drive](https://drive.google.com/open?id=19VGuIsv38JutNCkKrG3htBBau3gomhYC). Put `checkpoint` in the project root directory.
 
