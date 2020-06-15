@@ -151,7 +151,7 @@ def validate(val_loader, model):
 
     return top1.avg
 
-def validate_all(model, data_dir, exp_name, batch_size, kwargs):
+def evaluation(model, data_dir, exp_name, batch_size, kwargs):
 
     def data2loader(imgs, labels):
         assert len(imgs) == len(labels)
