@@ -4,6 +4,7 @@
     <list default="true" id="39c9bd3a-7755-4a50-b740-5171eed9ca4f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/checkpoint.pth.tar" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +70,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1592161750627</updated>
-      <workItem from="1592161756140" duration="13197000" />
+      <workItem from="1592161756140" duration="15149000" />
     </task>
     <servers />
   </component>
