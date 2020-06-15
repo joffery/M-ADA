@@ -92,6 +92,7 @@ def train(model, exp_name, kwargs):
     wae_optimizer = torch.optim.Adam(wae.parameters(), lr=1e-3)
     discriminator = Adversary().cuda()
     d_optimizer = torch.optim.Adam(discriminator.parameters(), lr=1e-3)
+
     for epoch in range(1, 20 + 1):
         wae_train(wae, discriminator, train_loader, wae_optimizer, d_optimizer, epoch)
 
@@ -109,6 +110,7 @@ def train(model, exp_name, kwargs):
     counter_k = 0
 
     for t in range(args.start_iters, args.num_iters):
+
         batch_time = AverageMeter()
         losses = AverageMeter()
         top1 = AverageMeter()
@@ -116,6 +118,7 @@ def train(model, exp_name, kwargs):
         break_point = int((len(train_loader) - 1) / (counter_k + 1))
         src_num = int(args.batch_size / (counter_k + 1))
         aug_num = args.batch_size - src_num
+
         # domain augmentation
         if (t > args.advstart_iter) and ((t + 1 - args.advstart_iter) % args.T_min == 0) and (counter_k < args.K):
             model.eval()
@@ -123,9 +126,11 @@ def train(model, exp_name, kwargs):
             virtual_test_images = []
             virtual_test_labels = []
             aug_start_time = time.time()
+
             for i, (input_a, target_a) in enumerate(train_loader):
                 if i == break_point:
                     break
+
                 if counter_k > 0:
                     input_b, target_b = next(aug_loader_iter)
                     input_comb = torch.cat((input_a[:src_num].float(), input_b[:aug_num])).cuda(non_blocking=True)
@@ -137,15 +142,18 @@ def train(model, exp_name, kwargs):
                     target_a = target_a.cuda(non_blocking=True).long()
                     input_aug = input_a.clone()
                     target_aug = target_a.clone()
+
                 input_aug = input_aug.cuda(non_blocking=True)
                 target_aug = target_aug.cuda(non_blocking=True)
                 aug_optimizer = torch.optim.SGD([input_aug.requires_grad_()], args.lr_max)
+
                 if counter_k == 0:
                     input_feat, output = model.functional(params, False, input_a, return_feat=True)
                     recon_batch, _, = wae(input_a)
                 else:
                     input_feat, output = model.functional(params, False, input_comb, return_feat=True)
                     recon_batch, _, = wae(input_comb)
+
                 # iteratively generate adversarial samples
                 for n in range(args.T_adv):
                     input_aug_feat, output_aug = model.functional(params, False, input_aug, return_feat=True)
@@ -159,15 +167,18 @@ def train(model, exp_name, kwargs):
                     aug_optimizer.zero_grad()
                     adv_loss.backward()
                     aug_optimizer.step()
+
                 virtual_test_images.append(input_aug.data.cpu().numpy())
                 virtual_test_labels.append(target_aug.data.cpu().numpy())
             virtual_test_images, virtual_test_labels = asarray_and_reshape(virtual_test_images, virtual_test_labels)
+
             if counter_k == 0:
                 only_virtual_test_images = np.copy(virtual_test_images)
                 only_virtual_test_labels = np.copy(virtual_test_labels)
             else:
                 only_virtual_test_images = np.concatenate([only_virtual_test_images, virtual_test_images])
                 only_virtual_test_labels = np.concatenate([only_virtual_test_labels, virtual_test_labels])
+
             # dataloader for domain augmentation
             aug_size = len(only_virtual_test_labels)
             X_aug = torch.stack([torch.from_numpy(only_virtual_test_images[i]) for i in range(aug_size)])
@@ -175,6 +186,7 @@ def train(model, exp_name, kwargs):
             aug_dataset = torch.utils.data.TensorDataset(X_aug, y_aug)
             aug_loader = torch.utils.data.DataLoader(aug_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, **kwargs)
             aug_loader_iter = iter(aug_loader)
+
             # dataloader for the latest domain augmentation
             new_aug_size = len(virtual_test_labels)
             new_X_aug = torch.stack([torch.from_numpy(virtual_test_images[i]) for i in range(new_aug_size)])
@@ -182,6 +194,7 @@ def train(model, exp_name, kwargs):
             new_aug_dataset = torch.utils.data.TensorDataset(new_X_aug, new_y_aug)
             new_aug_loader = torch.utils.data.DataLoader(new_aug_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True, **kwargs)
             new_aug_loader_iter = iter(new_aug_loader)
+
             # re-train a wae on  the latest domain augmentation
             if counter_k + 1 < args.K:
                 wae = WAE().cuda()
@@ -200,6 +213,7 @@ def train(model, exp_name, kwargs):
         except:
             train_loader_iter = iter(train_loader)
             input, target = next(train_loader_iter)
+
         input, target = input.cuda(non_blocking=True).float(), target.cuda(non_blocking=True).long()
         params = list(model.parameters())
         output = model.functional(params, True, input)  # training = True
@@ -223,6 +237,7 @@ def train(model, exp_name, kwargs):
             loss_combine = (loss + loss_b) / 2
             optimizer.zero_grad()
             loss_combine.backward()
+
         optimizer.step()
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target, topk=(1,))[0]
@@ -230,6 +245,7 @@ def train(model, exp_name, kwargs):
         top1.update(prec1.item(), input.size(0))
         # measure elapsed time
         batch_time.update(time.time() - end)
+
         if t % args.print_freq == 0:
             print('Iter: [{0}][{1}/{2}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
@@ -238,6 +254,7 @@ def train(model, exp_name, kwargs):
             # evaluate on validation set per print_freq, compute acc on the whole val dataset
             prec1 = validate(val_loader, model)
             print("validation set acc", prec1)
+
             save_checkpoint({
                 'iter': t + 1,
                 'state_dict': model.state_dict(),
@@ -245,6 +262,7 @@ def train(model, exp_name, kwargs):
             }, args.dataset, exp_name)
 
 def wae_train(model, D, new_aug_loader, optimizer, d_optimizer, epoch):
+
     def sample_z(n_sample=None, dim=None, sigma=None, template=None):
         if n_sample is None:
             n_sample = 32
@@ -254,6 +272,7 @@ def wae_train(model, D, new_aug_loader, optimizer, d_optimizer, epoch):
             sigma = z_sigma
         z = sigma * Variable(template.data.new(template.size()).normal_())
         return z
+
     z_var = 1
     z_sigma = math.sqrt(z_var)
     ones = Variable(torch.ones(32, 1)).cuda()
@@ -261,31 +280,38 @@ def wae_train(model, D, new_aug_loader, optimizer, d_optimizer, epoch):
     param = 100
     model.train()
     train_loss = 0
+
     for batch_idx, (data, _) in enumerate(new_aug_loader):
         input_comb = data.cuda(non_blocking=True).float()
         optimizer.zero_grad()
+
         recon_batch, z_tilde = model(input_comb)
         z = sample_z(template=z_tilde, sigma=z_sigma)
         log_p_z = log_density_igaussian(z, z_var).view(-1, 1)
+
         D_z = D(z)
         D_z_tilde = D(z_tilde)
         D_loss = F.binary_cross_entropy_with_logits(D_z + log_p_z, ones) + \
                  F.binary_cross_entropy_with_logits(D_z_tilde + log_p_z, zeros)
+
         total_D_loss = param * D_loss
         d_optimizer.zero_grad()
         total_D_loss.backward()
         d_optimizer.step()
+
         BCE = F.binary_cross_entropy(recon_batch, input_comb.view(-1, 3072), reduction='sum')
         Q_loss = F.binary_cross_entropy_with_logits(D_z_tilde + log_p_z, ones)
         loss = BCE + param * Q_loss
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
+
         if batch_idx % args.print_freq == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(new_aug_loader.dataset),
                 100. * batch_idx / len(new_aug_loader),
                 loss.item() / len(data)))
+
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(new_aug_loader.dataset)))
 
