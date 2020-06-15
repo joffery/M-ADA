@@ -3,7 +3,7 @@
 This repository holds the Pytorch implementation of [Learning to Learn Single Domain Generalization](https://arxiv.org/abs/2003.13216) by Fengchun Qiao, Long Zhao and Xi Peng. If you find our code useful in your research, please consider citing:
 
 ```
-@inproceedings{qiao2020learning,
+@inproceedings{qiaoCVPR20learning,
   title={Learning to learn single domain generalization},
   author={Qiao, Fengchun and Zhao, Long and Peng, Xi},
   booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
@@ -13,6 +13,10 @@ This repository holds the Pytorch implementation of [Learning to Learn Single Do
 ```
 
 ## Introduction
+
+We are concerned with a worst-case scenario in model generalization, in the sense that a model aims to perform well on many unseen domains while there is only one single domain available for training. We propose a new method named adversarial domain augmentation to solve this Out-of-Distribution (OOD) generalization problem. The key idea is to leverage adversarial training to create “fictitious” yet “challenging” populations, from which a model can learn to generalize with theoretical guarantees.
+
+<p align="center"><img src="overview.png" width="70%" alt="" /></p>
 
 ## Prerequisites
 
