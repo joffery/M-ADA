@@ -27,8 +27,8 @@ This package has the following requirements:
 
 Part of our code is borrowed from the following repositories.
 
--[generalize-unseen-domains](https://github.com/ricvolpi/generalize-unseen-domains)
--[WideResNet-pytorch](https://github.com/xternalz/WideResNet-pytorch)
--[WAE-pytorch](https://github.com/1Konny/WAE-pytorch)
+- [generalize-unseen-domains](https://github.com/ricvolpi/generalize-unseen-domains)
+- [WideResNet-pytorch](https://github.com/xternalz/WideResNet-pytorch)
+- [WAE-pytorch](https://github.com/1Konny/WAE-pytorch)
 
 We thank to the authors for releasing their codes. Please also consider citing their works.
