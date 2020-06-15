@@ -16,7 +16,7 @@ This repository holds the Pytorch implementation of [Learning to Learn Single Do
 
 We are concerned with a worst-case scenario in model generalization, in the sense that a model aims to perform well on many unseen domains while there is only one single domain available for training. We propose a new method named adversarial domain augmentation to solve this Out-of-Distribution (OOD) generalization problem. The key idea is to leverage adversarial training to create “fictitious” yet “challenging” populations, from which a model can learn to generalize with theoretical guarantees.
 
-<p align="center"><img src="overview.png" width="70%" alt="" /></p>
+<p align="center"><img src="overview.png" width="100%" alt="" /></p>
 
 ## Prerequisites
 
