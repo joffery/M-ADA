@@ -82,7 +82,7 @@ def main():
     if args.mode == 'train':
         train(model, exp_name, kwargs)
     else:
-        evaluation(model, args.data_dir, exp_name, args.batch_size, kwargs)
+        evaluation(model, args.data_dir, args.batch_size, kwargs)
 
 def train(model, exp_name, kwargs):
     print('Pre-train wae')
